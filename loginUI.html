@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>loginUI</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <style>
+		#login{
+            text-align: center;
+            width: 500px;
+            height: 350px;
+			position: absolute;
+			padding-top: 30px;
+        }
+		#title{
+			text-align: center;
+            width: 500px;
+            height: 100px;
+			position: absolute;
+			padding-top: 30px;
+		}
+		#beauty{
+			width: 300px;
+            height: 350px;
+			position: absolute;
+			padding-top: 30px;
+		}
+		#bg{
+			background-image:url(images/loginUIbg.png);
+			background-size:1540px 720px;
+		}
+		#loginbg{
+			text-align: center;
+            width: 500px;
+            height: 350px;
+			position: absolute;
+			padding-top: 30px;
+			opacity: .5;
+		}
+    </style>
+
+	<script type="text/javascript">
+		var w = window.innerWidth;
+    	var h = window.innerHeight;
+   		var login , title;
+    	window.onload=function() {
+        	login = document.getElementById("login");
+        	login.style.left = (w-500)*0.5 + "px";
+        	login.style.top = (h-350)*0.5 + "px";
+			loginbg = document.getElementById("loginbg");
+        	loginbg.style.left = (w-500)*0.5 + "px";
+        	loginbg.style.top = (h-350)*0.5 + "px";
+			title = document.getElementById("title");
+			title.style.left = (w-500)*0.5 + "px";
+			title.style.top = (h-600)*0.5 + "px";
+			beauty = document.getElementById("beauty");
+			beauty.style.left = (w-750)*0.5 + "px";
+			beauty.style.top = (h-384)*0.5 + "px";
+    	};
+	</script>
+ </head>
+  <body id = "bg"> <!--網頁的主要頁面-->
+	<div id = "title">
+		<h1><font color="yellow">腥城Online</font></h1>
+ 	</div>
+	 <div id = "loginbg" style = "background-color: rgb(226, 250, 90);"></div>
+	<div id = "login" >
+		<h1>登入頁面</h1><br/>
+		<form id = "loginForm" method = "post" action = "GamControlAjex.php?act=loginCheck">
+				<b>username:&emsp;</b><input name="username" type="text" id="username" /> <br/>
+				<br/>
+				<b>password:&emsp;</b><input name="pwd" type="text" id="pwd" /> <br/><!--可以將type改成password-->
+				<br/>
+				<button id = "loginbtn" type="submit" class="btn btn-success">確定</button><br/>
+		</form>
+		<hr/>
+		<a href = "register.html">重新註冊</a>
+	</div> 	
+	<div id = "beauty" >
+		<img src = "images/beauty7.png" width = "210px">
+	</div>		
+</body>
+</html>

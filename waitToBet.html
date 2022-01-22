@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>莊家等待下注...之後開獎</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <style>
+		#main{
+            text-align: center;
+            width: 600px;
+            height: 250px;
+            border: 5px solid black;
+			position: absolute;
+			padding-top: 30px;
+        }
+		#title{
+			text-align: center;
+            width: 500px;
+            height: 100px;
+			position: absolute;
+			padding-top: 30px;
+		}
+        #bg{
+            background-image:url(images/waitToBetbg.png);
+			background-size:1540px 740px;
+        }
+    </style>
+
+	<script type="text/javascript">
+		var w = window.innerWidth;
+    	var h = window.innerHeight;
+   		var login , title;
+    	window.onload=function() {
+        	main = document.getElementById("main");
+        	main.style.left = (w-600)*0.5 + "px";
+        	main.style.top = (h-380)*0.5 + "px";
+			title = document.getElementById("title");
+			title.style.left = (w-500)*0.5 + "px";
+			title.style.top = (h-600)*0.5 + "px";
+    	};
+	</script>
+    <script>
+        $(function getRoom(){        
+            fetch("GAMControlAjex.php?act=getRoomInfo")
+            .then(function(res){
+                return res.json();
+            })		
+            .then(function(json) {
+                if(json){
+                    var rid;
+                    for(let row of json){
+                         rid = row['rid']; 
+                    }
+                    countBet(rid);
+                    json2table(json,"main"); //把資料傳入此function，之後放到div(main頁面)
+                }
+            })
+        })
+        function json2table(json,divID) {
+            let tableStr = "<h3><font color = 'green'><b>房間資訊</b></font></h3><table  class='table'>";
+			tableStr += "<thead class='thead-dark'><tr>";
+			tableStr +=	" <th scope='col'>莊家</th> <th scope='col'>最終結果</th> <th scope='col'>-</th>";
+            tableStr += " </tr></thead><tbody>"
+            for(let row of json){ //把json的內容變成html的表格元件
+                tableStr += "<tr><th scope='row'>"+ row['username']
+                tableStr += "</th><td>" + row['ansnum'];
+                tableStr += "</td><td><button class='btn btn-warning' onclick = 'revealresult()'>開獎</button></td></tr>";
+            }//開獎按鈕
+            tableStr += "</tbody></table>";
+            document.getElementById(divID).innerHTML = tableStr;
+        }        
+        function countBet(rid){ //抓目前已經有幾人下注
+            fetch("GAMControlAjex.php?act=countBet&rid=" + rid)
+            .then(function(res){
+                return res.json();
+            })		
+            .then(function(json) {
+                if(json){
+                    let tableStr2 = "<h1><font color = 'white'>等待玩家下注...</font></h1>";
+                    for(let row of json){
+                        tableStr2 += "<p><font color='white'>目前參與的人數:&nbsp;" + row['countBet'];
+                    }
+                    tableStr2 += "</font></p>"
+                    document.getElementById("title").innerHTML = tableStr2;
+                }
+            })
+        }
+        function revealresult(){ //開獎按鈕按下之後
+            fetch("GamControlAjex.php?act=revealResult")
+            .then(function(res){
+                if(res){
+                    let resultStr = "<h2>開獎結束</h2>";
+                    document.getElementById("main").innerHTML = resultStr;
+                }
+            })		
+        }
+    </script>
+ </head>
+  <body id = "bg"> <!--網頁的主要頁面-->
+
+	<div id = "title">
+        <h1><font color = "white">等待玩家下注...</font></h1>
+    </div>
+		
+	<div id = "main" style = "background-color: rgb(154, 209, 159);">
+    </div> 
+</body>
+</html>

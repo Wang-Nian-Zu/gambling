@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>莊家開局</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <style>
+		#main{
+            text-align: center;
+            width: 600px;
+            height: 200px;
+			position: absolute;
+			padding-top: 30px;
+			background-color:transparent;
+        }
+		#title{
+			text-align: center;
+            width: 500px;
+            height: 100px;
+			position: absolute;
+			padding-top: 30px;
+			background-color:transparent;
+		}
+		#bg{
+			background-image:url(images/dealertable.jpg);
+			background-size:1530px 900px;
+		}
+    </style>
+
+	<script type="text/javascript">
+		var w = window.innerWidth;
+    	var h = window.innerHeight;
+   		var login , title;
+    	window.onload=function() {
+        	main = document.getElementById("main");
+        	main.style.left = (w-600)*0.5 + "px";
+        	main.style.top = (h-120)*0.5 + "px";
+			title = document.getElementById("title");
+			title.style.left = (w-500)*0.5 + "px";
+			title.style.top = (h-500)*0.5 + "px";
+    	};
+	</script>
+ </head>
+  <body id = "bg" background = "images/dealertable.jpg"> <!--網頁的主要頁面-->
+			
+	<nav class="navbar navbar-expand-lg navbar-dark"  style="background-color: #060706;">
+		<a class="navbar-brand mb-0 h1" href="mainUI.html">腥城online</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="navbar-header">
+			<a href="#" class="navbar-left">
+				<img src="images/logo.png"width="50px">
+			</a>
+		</div>
+		<div class="collapse navbar-collapse" id="navbarNavDropdown">
+		  <ul class="navbar-nav">
+			<li class="nav-item">
+			  <a class="nav-link" href="mainUI.html">遊戲大廳</a>
+			</li>
+			<li class="nav-item active">
+				<a class="nav-link" href="dealer.html">莊家開局<span class="sr-only">(current)</span></a>
+			</li>
+			<li class="nav-item">
+		   	  <a class="nav-link" href="player.html">進房遊玩</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" href="RankingsUI.html">財富排行榜</a>
+			</li>			
+			<li class="nav-item">
+				<a class="nav-link" href="loginUI.html">登出</a>
+			</li>
+		  </ul>
+		</div>
+	  </nav>	
+
+
+	  <div id = "title">
+        <h1><font color = "white"><b>莊家建立房間</b></font></h1>
+      </div>
+		
+ 	  
+	<div id = "main">
+        <h2>
+        <form id = "Form" method = "post" action = "GamControlAjex.php?act=setRoom">
+			<font color = "white">設置最終開獎結果</font><select class="form-select form-select-lg mb-3" aria-label="Default select example" name =  "AnsNum" id = "AnsNum"> <!-- select是下拉選項-->
+            <option value="1"selected>一點</option> <!-- option有兩個變數，藍色是真正的值，黑色是看到的值-->
+            <option value="2">兩點</option>
+            <option value="3">三點</option>
+            <option value="4">四點</option>
+            <option value="5">五點</option>
+          </select><br/>
+          <button id = "SetRoombtn" type="submit" class="btn btn-danger">開放下注</button><br/>
+        </form>
+        </h2>
+    </div> 
+</body>
+</html>

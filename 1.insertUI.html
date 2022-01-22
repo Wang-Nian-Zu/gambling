@@ -1,0 +1,90 @@
+<!DOCTYPE html >
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" /> 
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>input form</title>
+  <script> 
+  //表單的submit會跑到下一頁去，所以如果希望留在原本的頁面
+	function postForm(url,formID) { //我要post出去的url，表單的ID(下方的html表單取名叫Form)
+		let mydat = new FormData(); //宣告一個區域變數，型態是formdata
+		myform = document.getElementById(formID);//從myform這個表單物件裡面，把它當成FormData這個物件的來源，所以依照myform的內容，產生一個formdata的物件
+      //用for迴圈將，pair代表表單裡的每一個欄位
+        for (const pair of new FormData(myform)) { //依照裡面的內容，產生一個formdata的物件
+	        mydat.append(pair[0], pair[1]); //把你要的欄位塞進去表單物件
+		}
+		fetch(url,{
+			method: 'POST',
+			body: mydat //formdata物件放在body當表單內容
+		})
+		.then(function(res){
+			console.log(res);
+			return res.json();
+		})		
+		.then(function(json) {
+			console.log(json);
+			if(json){
+                json2table(json,"main2"); //把資料傳入此function，之後放到div(main頁面)
+			}
+		})
+	}
+    function json2table(json,divID) {
+		// Get keys (=cells) of each items
+		const keys = Object.keys(json[0]); //json物件裏頭的第0筆資料，把裡面的鍵值全部抓出來，放到這個變數keys
+        //const是常數，以後不變
+
+		// Build the table header
+		const header = `<thead><tr>` +  //反斜線:表示之後會把反斜線裏頭的內容變成網頁元件
+		keys.map(key => `<th>${key}</th>`) // map: 將陣列裏頭的每一個key值當變數傳進{key}，組成一個新的templete(模板，<th>${key}</th>)
+		  .join('') + `</thead></tr>`; //將個別陣列join(接)起來變成一個字串，在跟前後html串起來，這就是表頭(header)
+  
+		// Build the table body
+		const body = `<tbody>` +
+		  json.map(row => `<tr>${Object.values(row)
+			.map(cell => `<td>${cell}</td>`)
+			.join('')}</tr>`
+		  ).join('');
+		// Build the final table
+		//將製作好的表頭跟表身加上html的table，變成一個table的物件
+		const table = ` 
+		<p>以下是新增成功的待辦工作↓↓↓</p>
+		<table width="200" border = '1'>
+		  ${header}
+		  ${body}
+		</table>
+		`;  
+		// Append the result into #root element
+		document.getElementById(divID).innerHTML = table;
+	}
+  </script>
+</head>
+
+<body>
+<!--表格-->
+<table width="200" border="1">
+  <tr>
+    <td>title</td>
+    <td>note</td>
+    <td></td>
+  </tr>
+  <tr> <form  id = "Form">
+    <td><label>
+      <input name="title" type="text" id="title" /> <!--輸入此工作的title-->
+    </label></td>
+    <td><label>
+      <input name="note" type="text" id="note" /> <!--輸入此工作的note-->
+    </label></td>
+    </form><!--注意下方是按鈕，不要包在form裡面-->
+    <td><label>
+      <!--input type="submit" name="Submit" value="送出" /-->
+      <button onclick = "postForm('todoControlAjex.php?act=addJob', 'Form')">送出</button>
+    </label></td>
+
+  </tr>
+</table>
+<a href="HWmain.html">返回</a> <br>
+<hr />
+<div id="main2"> Add new Job!! </div>
+</body>
+</html>

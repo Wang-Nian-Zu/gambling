@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>玩家下注頁面</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <style>
+		#main{
+            text-align: center;
+            width: 600px;
+            height: 350px;
+			position: absolute;
+			padding-top: 90px;
+        }
+		#title{
+			text-align: center;
+            width: 500px;
+            height: 100px;
+			position: absolute;
+            background-color:transparent;
+		}
+        #roomtitle{
+			text-align: center;
+            width: 200px;
+            height: 100px;
+			position: absolute;
+            padding-top: 30px;
+		}
+        #bg{
+            background-image:url(images/playerbg2.png);
+			background-size:1540px 1000px;
+        }
+    </style>
+
+	<script type="text/javascript">
+		var w = window.innerWidth;
+    	var h = window.innerHeight;
+   		var login , title;
+    	window.onload=function() {
+        	main = document.getElementById("main");
+        	main.style.left = (w-600)*0.5 + "px";
+        	main.style.top = (h-200)*0.5 + "px";
+			title = document.getElementById("title");
+			title.style.left = (w-500)*0.5 + "px";
+			title.style.top = (h-600)*0.5 + "px";
+            roomtitle = document.getElementById("roomtitle");
+            roomtitle.style.left = (w-1500)*0.5 + "px";
+        	roomtitle.style.top = (h-600)*0.5 + "px";
+    	};
+	</script>
+
+    <script>
+        $(function (){ //取得player.html傳來的房號參數
+            var url = location.href;
+            if(url.indexOf('?')!=-1){
+                //之後去分割字串把分割後的字串放進陣列中
+                var ary1 = url.split('?');
+                //roomid = 取
+                var ary2 = ary1[1].split('=');
+                //取得roomid值
+                var roomid = ary2[1];
+            }
+            let tableStr = "<h1><font color = 'white'>房間號碼:" + roomid  ; 
+            tableStr += "</font></h1>";
+            document.getElementById("roomtitle").innerHTML = tableStr ;
+            document.getElementById("roomID").value = roomid ; //將roomID寫入到html的hidden表單中
+            fetch("GAMControlAjex.php?act=getUserInfo" ) //發request，需要一段時間，會回傳出promise物件
+			.then(function(resp){ //要等fetch執行完，才會callback這個then，
+		    	return resp.json(); //把promise物件變成字串
+			}) // .的意思是把上一個回傳值，變成下一個輸入值 
+			.then(function(json) { //.then要等，等web端callback，也可以是上一個callback做完，往下一個callback走
+				if (json){ //當json不是空值
+					let tableStr = "<img src = 'images/dealer1.png' width = '150px'>" ;
+					for(let row of json){ //把json的內容變成html的表格元件
+                    	tableStr += "<br/><p><font color='white'>您的錢包餘額:&nbsp;" + row['money'];
+                   		tableStr += "</p>"; //在表格裡頭加上已完成按鈕
+                	}
+                	document.getElementById("title").innerHTML = tableStr; //把html放到main這個div裡面
+				}
+            })
+        })
+    </script>
+ </head>
+  <body id = "bg"> <!--網頁的主要頁面-->
+    <nav class="navbar navbar-expand-lg navbar-dark"  style="background-color: #060706;">
+		<a class="navbar-brand mb-0 h1" href="mainUI.html">腥城online</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="navbar-header">
+			<a href="#" class="navbar-left">
+				<img src="images/logo.png"width="50px">
+			</a>
+		</div>
+		<div class="collapse navbar-collapse" id="navbarNavDropdown">
+		  <ul class="navbar-nav">
+			<li class="nav-item">
+			  <a class="nav-link" href="mainUI.html">遊戲大廳</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="dealer.html">莊家開局<span class="sr-only">(current)</span></a>
+			</li>
+			<li class="nav-item active">
+		   	  <a class="nav-link" href="player.html">進房遊玩</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" href="RankingsUI.html">財富排行榜</a>
+			</li>			
+			<li class="nav-item">
+				<a class="nav-link" href="loginUI.html">登出</a>
+			</li>
+		  </ul>
+		</div>
+	  </nav>	
+	<div id = "title">
+        <img src = "images/dealer1.png" width = "150px">
+    </div>
+		
+	<div id = "main">        
+        <form id = "Form" method = "post" action = "GamControlAjex.php?act=setBet">
+            <input type="hidden" id = "roomID" name = "roomID">
+        <font color="white">你要猜的點數是</font><select class="form-select form-select-lg mb-3" aria-label="Default select example" name =  "AnsNum" id = "AnsNum"> <!-- select是下拉選項-->
+            <option value="1"selected>一點</option> <!-- option有兩個變數，藍色是真正的值，黑色是看到的值-->
+            <option value="2">兩點</option>
+            <option value="3">三點</option>
+            <option value="4">四點</option>
+            <option value="5">五點</option>
+        </select><br/>
+        <font color="white">下注金額:&emsp;</font><input name="Betmoney" type="text" id="Betmoney"/> <br/><hr/>
+        <button id = "Betbtn" class="btn btn-primary" type="submit">下注</button>
+        </form>      
+    </div> 
+    <div id = "roomtitle" ></div>
+</body>
+</html>

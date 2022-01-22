@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>財富排行榜</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <!--<script src="jquery.session.js"></script>-->
+	<style>
+		#main{
+            text-align: center;
+            width: 1000px;
+            height: 400px;
+			position: absolute;
+			padding-top: 30px;
+        }
+		#title{
+			text-align: center;
+            width: 500px;
+            height: 100px;
+			position: absolute;
+			padding-top: 30px;
+		}
+    </style>
+
+	<script type="text/javascript">
+		var w = window.innerWidth;
+    	var h = window.innerHeight;
+   		var login , title;
+    	window.onload=function() {
+        	main = document.getElementById("main");
+        	main.style.left = (w-1000)*0.5 + "px";
+        	main.style.top = (h-400)*0.5 + "px";
+			title = document.getElementById("title");
+			title.style.left = (w-500)*0.5 + "px";
+			title.style.top = (h-600)*0.5 + "px";
+    	};
+	</script>
+ </head>
+  <body style = "background-color: rgb(24, 104, 31);"> <!--網頁的主要頁面-->
+			
+	<nav class="navbar navbar-expand-lg navbar-dark"  style="background-color: #060706;">
+		<a class="navbar-brand mb-0 h1" href="mainUI.html">腥城online</a>
+		
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="navbar-header">
+			<a href="#" class="navbar-left">
+				<img src="images/logo.png"width="50px">
+			</a>
+		</div>
+		<div class="collapse navbar-collapse" id="navbarNavDropdown">
+		  <ul class="navbar-nav">
+			<li class="nav-item">
+			  <a class="nav-link" href="mainUI.html">遊戲大廳</a>
+			</li>
+			<li class="nav-item">
+			  <a class="nav-link" href="dealer.html">莊家開局</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="player.html">進房遊玩</a>
+			  </li>
+			<li class="nav-item active">
+			  <a class="nav-link" href="RankingsUI.html">財富排行榜<span class="sr-only">(current)</span></a>
+			</li>			
+			<li class="nav-item">
+				<a class="nav-link" href="loginUI.html">登出</a>
+			</li>
+		  </ul>
+		</div>
+	  </nav>	
+	  <div id = "title" style = "background-color: rgb(24, 104, 31);">
+		<h1><font color = "white">🏆財富排行榜🏆</font></h1>
+	  </div>
+		<script>
+			//$(function () {  
+				//$.session.set('userID','jqueryscript');
+            	//var name =  $.session.get('userID'); 
+            	//$('#title').text(name)  
+            //});
+			$(function (){ //打算要去抓的網址、要放到哪一個div
+				fetch("GAMControlAjex.php?act=getRankings" ) //發request，需要一段時間，會回傳出promise物件
+				.then(function(resp){ //要等fetch執行完，才會callback這個then，
+           		 // console.log(resp)          
+		    		return resp.json(); //把promise物件變成字串
+				}) // .的意思是把上一個回傳值，變成下一個輸入值 
+				.then(function(json) { //.then要等，等web端callback，也可以是上一個callback做完，往下一個callback走
+					if (json){ //當json不是空值
+						let ranking = 0 ;
+						let tableStr = "<table class='table'><thead class='thead-dark'><tr>";
+						tableStr += "<th scope='col'>名次</th>"
+						tableStr += "<th scope='col'>用戶名</th>"
+						tableStr += "<th scope='col'>金額</th>"
+						tableStr += " </tr></thead> <tbody>"
+                		for(let row of json){ //把json的內容變成html的表格元件
+                            ranking += 1;
+							if((ranking == 1)){ //第一名的用戶
+								tableStr += "<tr><th scope='row'><img src='images/first.png' width = '30px'><font color = 'white'>" + ranking;
+							}else if((ranking == 2)){ //第二名的用戶
+								tableStr += "</font><tr><th scope='row'><img src='images/second.png' width = '30px'><font color = 'white'>" + ranking;
+							}else if((ranking == 3)){ //第三名的用戶
+								tableStr += "</font><tr><th scope='row'><img src='images/third.png' width = '30px'><font color = 'white'>" + ranking;
+							}else{//其他名次
+								tableStr += "</font><tr><th scope='row'><img src='images/blank.png' width = '30px'><font color = 'white'>" + ranking;
+							}				
+                    		tableStr += "</font></th><td><font color = 'white'>" + row['username'];
+                    		tableStr += "</font></td><td><font color = 'white'>" + row['money'];
+                   			tableStr += "</font></td></tr>"; //在表格裡頭加上已完成按鈕
+                		}
+						tableStr += "</tbody></table>";
+                		document.getElementById("main").innerHTML = tableStr; //把html放到main這個div裡面
+					}	
+				})
+			})
+		</script>
+ 	  
+	<div id = "main">
+		<h1><font color="green">Hello, </font></h1><br/>
+		<h2>錢包餘額: </h2>
+	</div> 
+</body>
+</html>
