@@ -38,7 +38,7 @@ function loginCheck($username,$pwd){
 	return false;
 }
 
-function getUserInfo($usr) {//利用多形的方式，讓有傳參數或未傳參數的function都可以跑
+function getUserInfo($usr) {
 	global $db;
 	$sql = "select * from user where username = ? ;";
 	$stmt = mysqli_prepare($db, $sql );
@@ -57,7 +57,7 @@ function getUserInfo($usr) {//利用多形的方式，讓有傳參數或未傳�
 	return $retArr;//最後是回傳一個二維陣列
 }
 
-function getRankings(){
+function getRankings(){ //列出每個user(用錢排序)
 	global $db;
 	$sql = "select * from user ORDER BY money DESC;"; //用錢這個欄位排序(由大到小)
 	$stmt = mysqli_prepare($db, $sql);
@@ -72,7 +72,7 @@ function getRankings(){
 	}
 	return $retArr;//最後是回傳一個二維陣列
 }
-function addRoom($username,$ansnum) {
+function addRoom($username,$ansnum) {//莊家要開一個新房間
 	global $db;
 	$sql = "select * from room where dealerUsername = ? ;";
     $stmt = mysqli_prepare($db, $sql);
@@ -158,15 +158,20 @@ function getRoomList(){ //列出房間狀態開著的room
 	}
 	return $retArr;//最後是回傳一個二維陣列
 }
-function addBet($rid,$usr,$ans,$Betmoney) {
-	global $db;
+function getMoney($usr){
+    global $db;
 	$sql = "select money from user where username = ? ;";
     $stmt = mysqli_prepare($db, $sql);
 	mysqli_stmt_bind_param($stmt, "s", $usr);
     mysqli_stmt_execute($stmt);
 	$result = mysqli_stmt_get_result($stmt);  //將執行完的結果放到$result裏
     $rs = mysqli_fetch_assoc($result);
-	if($rs['money'] <  $Betmoney){ //當押注金額大於自己擁有的錢
+	return $rs['money'];
+}
+function addBet($rid,$usr,$ans,$Betmoney) { 
+	global $db;
+	$money = getMoney($usr);
+	if($money <  $Betmoney){ //當押注金額大於自己擁有的錢
 		return false;
 	}else{ 
         $sql2 = "insert into bet (roomNum, username, guessNum, betMoney) values (?, ?, ? ,?)"; //sql指令的insert語法

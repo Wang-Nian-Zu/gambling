@@ -13,7 +13,7 @@
 		#main{
             text-align: center;
             width: 600px;
-            height: 250px;
+            height: 300px;
             border: 5px solid black;
 			position: absolute;
 			padding-top: 30px;
@@ -65,9 +65,9 @@
             let tableStr = "<h3><font color = 'green'><b>房間資訊</b></font></h3><table  class='table'>";
 			tableStr += "<thead class='thead-dark'><tr>";
 			tableStr +=	" <th scope='col'>莊家</th> <th scope='col'>最終結果</th> <th scope='col'>-</th>";
-            tableStr += " </tr></thead><tbody>"
+            tableStr += " </tr></thead><tbody>";
             for(let row of json){ //把json的內容變成html的表格元件
-                tableStr += "<tr><th scope='row'>"+ row['username']
+                tableStr += "<tr><th scope='row'>"+ row['username'];
                 tableStr += "</th><td>" + row['ansnum'];
                 tableStr += "</td><td><button class='btn btn-warning' onclick = 'revealresult()'>開獎</button></td></tr>";
             }//開獎按鈕
@@ -93,11 +93,32 @@
         function revealresult(){ //開獎按鈕按下之後
             fetch("GamControlAjex.php?act=revealResult")
             .then(function(res){
-                if(res){
-                    let resultStr = "<h2>開獎結束</h2>";
+                return res.json();
+            })
+            .then(function(json){
+                if(json){
+                    let resultTitle = "<h2><font color = 'white'>開獎結果</font></h2>";
+                    let resultStr = "<table  class='table'><thead class='thead-dark'><tr>";
+                    resultStr += "<th scope='col'>原本的錢</th> <th scope='col'>計算後的錢</th>";
+                    resultStr += " </tr></thead><tbody>";
+                    for(let row of json){ //把json的內容變成html的表格元件
+                        resultStr += "<tr><td>" + row['BeforeMoney'];
+                        resultStr += "</td><td>" + row['AfterMoney'];
+                        resultStr += "</td></tr>";
+                    }
+                    resultStr += "</tbody></table>";
+                    resultStr += "<button type='button' class='btn btn-success btn-lg btn-block' onclick = 'returnMain()' >確定</button>";
+                    resultStr += "<button type='button' class='btn btn-success btn-lg btn-block' onclick = 'playAgain()' >再玩一次</button>";
+                    document.getElementById("title").innerHTML = resultTitle;
                     document.getElementById("main").innerHTML = resultStr;
                 }
             })		
+        }
+        function returnMain(){
+            location.href = "mainUI.html";
+        }
+        function playAgain(){
+            location.href = "dealer.html";
         }
     </script>
  </head>

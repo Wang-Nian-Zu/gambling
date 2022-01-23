@@ -112,16 +112,21 @@ switch ($act) { //用switch語法，判斷act這個變數要做哪件事
 		$usr = $_SESSION["userID"]; //session取莊家的username
 		$DealerRoomlist = getRoomInfo2($usr); //莊家的房間資訊(回傳一維陣列)
 		$AllBetlist = getAllBetList($DealerRoomlist['rid']); //這間房間所有的賭注訊息(二維陣列)
-		
+		$resultArray = array(); //將結果表設一個二維陣列
+		$tArray = array();//設一個一維陣列存裏頭的資訊
+		$tArray['BeforeMoney'] = getMoney($usr); //回傳結算前的莊家錢包
 		for($i = 0 ; $i < count($AllBetlist); $i++){//每個玩家要逐一和莊家比對
 			if($DealerRoomlist['answerNum'] == $AllBetlist[$i]['guessNum']){ //點數相同，玩家贏錢
-				PlayerWinUpdateMoney($usr, $AllBetlist[$i]['username'], $AllBetlist[$i]['betMoney']);//回傳結果表
+				PlayerWinUpdateMoney($usr, $AllBetlist[$i]['username'], $AllBetlist[$i]['betMoney']);
+				//回傳一維陣列，裏頭欄位有，玩家的用戶名，莊家起始錢，莊家計算後的錢，。
 			}else{ //點數不同，莊家贏錢
 				DealerWinUpdateMoney($usr, $AllBetlist[$i]['username'], $AllBetlist[$i]['betMoney']);//回傳結果表
 			}
 		}	
+		$tArray['AfterMoney'] = getMoney($usr); //回傳結算後的莊家錢包
+		$resultArray[] = $tArray ;
 		closeRoom($usr); //關掉莊家的房間的狀態
-		echo "OK";
+		echo json_encode($resultArray);
 		break;
 	default:
 }
