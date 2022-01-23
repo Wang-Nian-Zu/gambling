@@ -103,7 +103,7 @@ switch ($act) { //用switch語法，判斷act這個變數要做哪件事
 		$list = getBetInfo($usr); 
 		echo json_encode($list); //將陣列變成JSON字串傳回
 		break;
-	case "countBet": //傳回房間資訊
+	case "countBet": //傳回有幾個人參與該房間的賭注(二維陣列傳回)
 		$rid = $_REQUEST['rid'];
 		$list = countBet($rid); 
 		echo json_encode($list); //將陣列變成JSON字串傳回
@@ -128,6 +128,37 @@ switch ($act) { //用switch語法，判斷act這個變數要做哪件事
 		closeRoom($usr); //關掉莊家的房間的狀態
 		echo json_encode($resultArray);
 		break;
+		
+	case "getRevealResult": //回傳玩家開獎前後的錢
+		$usr = $_SESSION["userID"]; //session取玩家的username
+		$OriMoney = $_SESSION["OriginalMoney"];		
+		$resultArray = array(); 
+		$tArray = array();
+		$tArray['BeforeMoney'] = $OriMoney;
+		$tArray['AfterMoney'] = getMoney($usr); //取得玩家開獎計算後的錢
+		$resultArray[] = $tArray ;
+		DeleteThisBet($usr); //刪除這則押注訊息
+		echo json_encode($resultArray);
+		break;
+	case "getOriginalMoney": //查出玩家開獎前的原始金額
+		$usr = $_SESSION["userID"];
+		$_SESSION["OriginalMoney"] = getMoney($usr);
+        echo $_SESSION["OriginalMoney"];
+	case "checkRoomstatus":
+		$usr = $_SESSION["userID"]; //session取玩家的username
+		$list = getBetInfo($usr);  //找到玩家的押注訊息(回傳二維陣列)
+		$resultArray = array();
+		$tArray = array();
+		if($list != ""){//如果抓到Bet資訊
+			$rid = $list[0]['roomNum']; //拿到房號(上方的二維陣列一定只有一筆資料，所以這裡可以寫死)
+			if(checkRoomStatus($rid)){//return true表示房間關起來了(已經開獎了)
+				$tArray['status'] = "close";
+			}else{
+				$tArray['status'] = "open";
+			}
+		}
+		$resultArray[] = $tArray;
+		echo json_encode($resultArray);
 	default:
 }
 ?>

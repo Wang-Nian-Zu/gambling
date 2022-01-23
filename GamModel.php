@@ -125,6 +125,7 @@ function getRoomInfo($usr) { //回傳指定莊家的房間資訊(回傳二維陣
 		$tArr['rid']=$rs['rid'];
 		$tArr['username']=$rs['dealerUsername'];
 		$tArr['ansnum']=$rs['answerNum'];
+		$tArr['status']=$rs['status'];
 		$retArr[] = $tArr;
 	}
 	return $retArr;//最後是回傳一個二維陣列
@@ -141,6 +142,7 @@ function getRoomInfo2($usr) { //回傳指定莊家的房間資訊(回傳一維�
 	$tArr['rid']=$rs['rid'];
 	$tArr['dealerUsername']=$rs['dealerUsername'];
 	$tArr['answerNum']=$rs['answerNum'];
+	$tArr['status']=$rs['status'];
 	return $tArr;//最後是回傳一個一維陣列
 }
 function getRoomList(){ //列出房間狀態開著的room
@@ -174,10 +176,22 @@ function addBet($rid,$usr,$ans,$Betmoney) {
 	if($money <  $Betmoney){ //當押注金額大於自己擁有的錢
 		return false;
 	}else{ 
-        $sql2 = "insert into bet (roomNum, username, guessNum, betMoney) values (?, ?, ? ,?)"; //sql指令的insert語法
-		$stmt2 = mysqli_prepare($db, $sql2); //prepare sql statement
-		mysqli_stmt_bind_param($stmt2, "isii", $rid , $usr, $ans, $Betmoney); //bind parameters with variables(將變數bind到sql指令的問號中)
-		mysqli_stmt_execute($stmt2);  //執行SQL
+		$sql = "select * from bet where username = ? ;";
+    	$stmt = mysqli_prepare($db, $sql);
+		mysqli_stmt_bind_param($stmt, "s", $usr);
+    	mysqli_stmt_execute($stmt);
+		$result = mysqli_stmt_get_result($stmt);  
+		if($rs = mysqli_fetch_assoc($result)){ //如果資料表裡有之前押注的訊息，將其覆寫
+			$sql2 = "update bet set roomNum = ? , guessNum = ? , betMoney = ? where username = ? ;"; 
+			$stmt2 = mysqli_prepare($db, $sql2);
+			mysqli_stmt_bind_param($stmt2, "iiis", $rid , $ans, $Betmoney, $usr);
+			mysqli_stmt_execute($stmt2);  //執行SQL
+		}else{
+			$sql2 = "insert into bet (roomNum, username, guessNum, betMoney) values (?, ?, ? ,?)"; //sql指令的insert語法
+			$stmt2 = mysqli_prepare($db, $sql2); //prepare sql statement
+			mysqli_stmt_bind_param($stmt2, "isii", $rid , $usr, $ans, $Betmoney); //bind parameters with variables(將變數bind到sql指令的問號中)
+			mysqli_stmt_execute($stmt2);  //執行SQL
+		}
 		return true;
 	}
 }
@@ -255,7 +269,6 @@ function PlayerWinUpdateMoney($dealerUsr,$playerUsr,$betmoney){ //玩家贏錢�
 	$result = mysqli_stmt_get_result($stmt);
 	$rs = mysqli_fetch_assoc($result);
 	//莊家輸錢
-	
 	$sql = "update user set money = ? where username = ? ;";
 	$stmt = mysqli_prepare($db, $sql);
 	$newDealerWallet = (int)$rs['money'] - (5 * (int)$betmoney);
@@ -313,6 +326,14 @@ function closeRoom($usr){//開獎後關閉房間狀態
 	$stmt = mysqli_prepare($db, $sql);
 	mysqli_stmt_bind_param($stmt,"s",$usr);
 	mysqli_stmt_execute($stmt);
+	return true;
+}
+function DeleteThisBet($usr){ //
+	global $db;
+	$sql = "delete from bet where username = ?";
+    $stmt = mysqli_prepare($db, $sql);
+	mysqli_stmt_bind_param($stmt, "s", $usr);
+    mysqli_stmt_execute($stmt);
 	return true;
 }
 ?>

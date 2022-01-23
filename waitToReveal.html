@@ -46,14 +46,19 @@
 	</script>
 
     <script>
-       $(function getBetInfo(){        
+       var OriginalMoney;
+       $(function getBetInfo(){      
             fetch("GAMControlAjex.php?act=getBetInfo")
             .then(function(res){
                 return res.json();
             })		
             .then(function(json) {
-                if(json){
+                if(JSON.stringify(json) != "{}"){
                     json2table(json,"main"); //把資料傳入此function，之後放到div(main頁面)
+                    checkPlayerResult();
+                }else{//檢查玩家是否看完結果了(看他的bet如果刪掉就抓不到了)
+                    alert('此場賭局已經不存在');
+                    location.href = 'mainUI.html';//看完就強制導向大廳
                 }
             })
         })
@@ -71,7 +76,65 @@
             }
             tableStr += "</tbody></table>";
             document.getElementById(divID).innerHTML = tableStr;
-        }      
+        }   
+        function myOriginalmoney(){
+            fetch("GAMControlAjex.php?act=getOriginalMoney")
+            .then(function(res){
+                if(res){
+                    OriginalMoney = res;
+                }
+            })
+        }
+        function checkPlayerResult(){
+            fetch("GAMControlAjex.php?act=checkRoomstatus")
+            .then(function(res){
+                return res.json();
+            })
+            .then(function(json){  
+                for(let row of json){
+                    if(row['status'] == "close"){
+                        printPlayerResult();
+                    }else{
+                        myOriginalmoney();
+                    }
+                }
+            })
+        }
+        function printPlayerResult(){ //印出
+            fetch("GAMControlAjex.php?act=getRevealResult")
+            .then(function(res){
+                return res.json();
+            })
+            .then(function(json) {
+                if(json){
+                    let resultTitle = "<h2><font color = 'white'>開獎結果</font></h2>";
+                    let resultStr = "<table  class='table'><thead class='thead-dark'><tr>";
+                    resultStr += "<th scope='col'>原本的錢</th><th scope='col'>計算後的錢</th><th scope='col'>-</th>";
+                    resultStr += " </tr></thead><tbody>";
+                    for(let row of json){ //把json的內容變成html的表格元件
+                        resultStr += "<tr><td>" + row['BeforeMoney'];
+                        resultStr += "</td><td>" + row['AfterMoney'];
+                        if(parseInt(row['BeforeMoney']) > parseInt(row['AfterMoney'])){
+                            if(parseInt(row['AfterMoney']) == 0){
+                                resultStr += "</td><td><font color = 'blue'><b>輸到脫褲子XD(破產)</b></font>";
+                            }else{
+                                resultStr += "</td><td><font color = 'blue'><b>輸</b></font>";
+                            }
+                        }else{
+                            resultStr += "</td><td><font color = 'red'><b>贏</b></font>";
+                        }
+                        resultStr += "</td></tr>";
+                    }
+                    resultStr += "</tbody></table>";
+                    resultStr += "<button type='button' class='btn btn-success btn-lg btn-block' onclick = 'returnMain()'>確定</button>";
+                    document.getElementById("title").innerHTML = resultTitle;
+                    document.getElementById("main").innerHTML = resultStr;
+                }
+            })
+        }
+        function returnMain(){
+            location.href = "mainUI.html";
+        } 
     </script>
 
  </head>
