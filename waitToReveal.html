@@ -54,7 +54,7 @@
             .then(function(json) {
                 if(json){
                     json2table(json,"main"); //把資料傳入此function，之後放到div(main頁面)
-                    checkBetisNull() ;
+                    checkBetisNull() ; //先檢查Bet還在不在
                 }
             })
         })
@@ -141,11 +141,11 @@
             .then(function(json){
                 if(json){
                     for(let row of json){
-                        if(row['isNull'] == "havenoValue"){
-                            alert('OK');
-                            location.href = 'mainUI.html';
-                        }else{
-                            checkPlayerResult(); 
+                        if(row['isNull'] == "havenoValue"){ //如果Bet不再了
+                            alert('此房間已經不存在');
+                            location.href = 'mainUI.html'; //將玩家轉址到大廳
+                        }else{ //如果資料庫中玩家的Bet還在
+                            checkPlayerResult(); //檢查莊家是否有開獎
                         }
                     }
                 }
