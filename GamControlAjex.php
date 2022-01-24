@@ -144,6 +144,7 @@ switch ($act) { //用switch語法，判斷act這個變數要做哪件事
 		$usr = $_SESSION["userID"];
 		$_SESSION["OriginalMoney"] = getMoney($usr);
         echo $_SESSION["OriginalMoney"];
+		break;
 	case "checkRoomstatus":
 		$usr = $_SESSION["userID"]; //session取玩家的username
 		$list = getBetInfo($usr);  //找到玩家的押注訊息(回傳二維陣列)
@@ -159,6 +160,17 @@ switch ($act) { //用switch語法，判斷act這個變數要做哪件事
 		}
 		$resultArray[] = $tArray;
 		echo json_encode($resultArray);
+		break;
+	case "checkBetisNull":
+		$usr = $_SESSION["userID"];
+		$resultArray = array();
+		$tArray = array();
+		if(checkBetisNull($usr)){
+			$tArray['isNull'] = "havenoValue";
+		}
+		$resultArray[] = $tArray;
+		echo json_encode($resultArray);
+		break;
 	default:
 }
 ?>

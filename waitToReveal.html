@@ -13,8 +13,7 @@
 		#main{
             text-align: center;
             width: 600px;
-            height: 450px;
-            border: 5px solid blue;
+            height: 250px;
 			position: absolute;
 			padding-top: 30px;
         }
@@ -53,12 +52,9 @@
                 return res.json();
             })		
             .then(function(json) {
-                if(JSON.stringify(json) != "{}"){
+                if(json){
                     json2table(json,"main"); //把資料傳入此function，之後放到div(main頁面)
-                    checkPlayerResult();
-                }else{//檢查玩家是否看完結果了(看他的bet如果刪掉就抓不到了)
-                    alert('此場賭局已經不存在');
-                    location.href = 'mainUI.html';//看完就強制導向大廳
+                    checkBetisNull() ;
                 }
             })
         })
@@ -76,16 +72,9 @@
             }
             tableStr += "</tbody></table>";
             document.getElementById(divID).innerHTML = tableStr;
+           
         }   
-        function myOriginalmoney(){
-            fetch("GAMControlAjex.php?act=getOriginalMoney")
-            .then(function(res){
-                if(res){
-                    OriginalMoney = res;
-                }
-            })
-        }
-        function checkPlayerResult(){
+        function checkPlayerResult(){ //檢查現在是不是開獎了
             fetch("GAMControlAjex.php?act=checkRoomstatus")
             .then(function(res){
                 return res.json();
@@ -100,7 +89,8 @@
                 }
             })
         }
-        function printPlayerResult(){ //印出
+        function printPlayerResult(){ //印出該玩家的前後金額
+            checkBetisNull();
             fetch("GAMControlAjex.php?act=getRevealResult")
             .then(function(res){
                 return res.json();
@@ -129,6 +119,35 @@
                     resultStr += "<button type='button' class='btn btn-success btn-lg btn-block' onclick = 'returnMain()'>確定</button>";
                     document.getElementById("title").innerHTML = resultTitle;
                     document.getElementById("main").innerHTML = resultStr;
+                }
+            })
+        }
+        function myOriginalmoney(){ //找到我的原始金額
+            fetch("GAMControlAjex.php?act=getOriginalMoney")
+            .then(function(res){
+                if(res){
+                    OriginalMoney = res;
+                }
+            })
+        }
+        var isnull;
+        function checkBetisNull(){
+            fetch("GAMControlAjex.php?act=checkBetisNull")
+            .then(function(res){
+                if(res){
+                    return res.json();
+                }
+            })
+            .then(function(json){
+                if(json){
+                    for(let row of json){
+                        if(row['isNull'] == "havenoValue"){
+                            alert('OK');
+                            location.href = 'mainUI.html';
+                        }else{
+                            checkPlayerResult(); 
+                        }
+                    }
                 }
             })
         }

@@ -336,4 +336,17 @@ function DeleteThisBet($usr){ //
     mysqli_stmt_execute($stmt);
 	return true;
 }
+function checkBetisNull($usr){
+	global $db;
+	$sql = "select count(*) as count from bet where username = ?";
+	$stmt = mysqli_prepare($db, $sql);
+	mysqli_stmt_bind_param($stmt, "s", $usr);
+    mysqli_stmt_execute($stmt);
+	$result = mysqli_stmt_get_result($stmt); 
+	$rs = mysqli_fetch_assoc($result);
+	if((int)$rs['count'] == 0){
+		return true ;
+	}
+	return false;
+}
 ?>
