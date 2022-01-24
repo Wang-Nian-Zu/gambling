@@ -171,6 +171,10 @@ switch ($act) { //用switch語法，判斷act這個變數要做哪件事
 		$resultArray[] = $tArray;
 		echo json_encode($resultArray);
 		break;
+	case "logout":
+		$_SESSION["userID"] = "";
+		echo "OK";
+		break;
 	default:
 }
 ?>
