@@ -26,13 +26,12 @@ function loginCheck($username,$pwd){
 	mysqli_stmt_bind_param($stmt,"s",$pwd);//將使用者輸入的password，用字串的形式，去bind到$sql指令的?
 	mysqli_stmt_execute($stmt);//執行一個sql指令
 	$result = mysqli_stmt_get_result($stmt);  //將執行完的結果放到$result裏
-	if($rs = mysqli_fetch_assoc($result)){ //看有沒有抓到result那張select出來的表 
+	while($rs = mysqli_fetch_assoc($result)){ //看有沒有抓到result那張select出來的表 
 		if($rs['username'] == $username){ //之後再比較相同用戶名欄位
 			$_SESSION["userID"] = $username;
 			return true;
 		}else{
 			$_SESSION["userID"] = '';
-			return false;
 		}
 	}
 	return false;
